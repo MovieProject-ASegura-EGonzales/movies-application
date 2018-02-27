@@ -1,27 +1,18 @@
-/**
- * es6 modules and imports
- */
-
 const $ = require('jquery');
 import sayHello from './hello';
 sayHello('World');
 
-/**
- * require style imports
- */
-// const {postMovies} = require('./api.js');
+
 const {getMovies} = require('./api.js');
 
-$(document).ready(function(){
-    // $('#addTest').remove();
-    setTimeout(function () {
-    $('#load_screen').remove();
+$(document).ready(() => {
+    setTimeout(() => {  // Timer with a delay of 1.2 seconds.  API delay is the same.
+    $('.message').remove(); // Removes "loading" message from screen
     $('<h1>The Movie App</h1><br>').appendTo(".addTest");
         $('#main').removeClass('hidden');
         $('#listMovies').removeClass('hidden');
         $('form').removeClass('hidden');
     }, 1200)
-
 });
 
 listAndTable();
@@ -42,10 +33,10 @@ const postMovies = (movie, rating) => {
 }
 
 function listAndTable(){
-    $('<table id="listMovies" class="listTable hidden" align="center">\n' +
-        '<thead>\n' +
+    $('<table id="listMovies" class="listTable hidden table-striped" align="center" style="width: 100%">\n' +
+        '<thead class="thead-dark">\n' +
         '<tr>\n' +
-        '<th>ID</th>\n' +
+        // '<th>ID</th>\n' +
         '<th>Name</th>\n' +
         '<th>Rating</th>\n' +
         '</tr>\n' +
@@ -61,7 +52,7 @@ function tableLoad(){
         movies.forEach(({title, rating, id}) => {
             let htmlString = "";
             htmlString += "<tr>";
-            htmlString += "<td>" + id + "</td>";
+            // htmlString += "<td>" + id + "</td>";
             htmlString += "<td>" + title + "</td>";
             htmlString += "<td>" + rating + "</td>";
             htmlString += "</tr>";
@@ -70,7 +61,8 @@ function tableLoad(){
         });
         movies.forEach(({title, rating, id}) => {
             let htmlString = "";
-            htmlString += "<a class=\"moviesDroped dropdown-item\" href=\"#\">" + id + "  " + title + "</a>";
+            // htmlString += "<a class=\"moviesDroped dropdown-item\" href=\"#\">" + id + "  " + title + "</a>";
+            htmlString += "<a class=\"moviesDroped dropdown-item\" href=\"#\">" + title + "</a>";
             $('#dropMovies').append(htmlString);
         });
     movieEditLoad();
@@ -93,76 +85,58 @@ function submitMovies() {
     }
 }
 
+function delayMessage() {
+    $('#load_screen').addClass('.show');
+    setTimeout(()=>{
+        $('#load_screen').remove();
+    },1200);
+}
+
 // SUBMIT BUTTONS
 $("#submit").click(function() {
+    delayMessage();
     submitMovies();
     location.reload();
 });
 
 // Delete Movie
 $("#delete").click(function() {
+    delayMessage();
     let movieNametoDelete = movieDropdown.toString();
     deleteData(movieNametoDelete);
     location.reload();
 });
 
-$("#edit").click(function() {
-    sendStringToBox()
-
-    // var newMovieName = $('#movieInput').val();
-    // var nameSplited = newMovieName.split(" ");
-    // var nameNormalized = nameSplited[1].toString();
-    //
-    // $("#submit").click(function() {
-    //     submitMovies();
-    //     location.reload();
-    // });
+$("#dropMovies").click(function() {
+    delayMessage();
+    sendStringToBox();
     let movieNametoDelete = movieDropdown.toString();
     deleteData(movieNametoDelete);
-
-});
-
-$("#sendEdit").click(function() {
-//   we need to delete the selected movie, and send the new movie or updated movie.
-//     var newMovieName = $('#movieInput').val();
-//     var nameSplited = newMovieName.split(" ");
-//     var nameNormalized = nameSplited[1].toString();
-//
-//     let movieNametoDelete = movieDropdown.toString();
-//     deleteData(movieNametoDelete);
-//
-//     if (newMovieName) {
-//         postMovies(newMovieName);
-//     } else {
-//         alert('Please enter a movie to POST.');
-//     }
-//     location.reload();
-
+    movieDropdown.pop();
 });
 
 let sendStringToBox = () => {
-    let movieNametoDelete = movieDropdown.toString();
-    console.log("This is from sendStringToBox: " + movieNametoDelete);
-    $('#movieInput').val(movieNametoDelete);
+    let movieNametoEdit = movieDropdown.toString();
+    console.log("This is from sendStringToBox: " + movieNametoEdit);
+    $('#movieInput').val(movieNametoEdit);
 }
 
 // Logic for rating dropdown
 let ratings = $('.dropdown-item');
 ratings = Array.from(ratings);
-
-ratings.forEach(function (element) {
-    element.addEventListener('click', function() {
-        var selection = element.innerText;
-        console.log(selection);
-        rating.push(selection);
+    ratings.forEach(function (element) {
+        element.addEventListener('click', () => {
+            var selection = element.innerText;
+            console.log(selection);
+            rating.push(selection);
+        });
     });
-});
 
-let movieDropdown = [];
+let movieDropdown = []; // array to hold the values of the dropdown values.
 
 const movieEditLoad = () => {
-    let moviesDropdown = $('.moviesDroped');
-    moviesDropdown = Array.from(moviesDropdown);
+    let moviesDropdown = $('.moviesDroped'); //class moviesDroped
+    moviesDropdown = Array.from(moviesDropdown); //send info to array
 
     moviesDropdown.forEach(function (element) {
         element.addEventListener('click', function() {
@@ -173,16 +147,19 @@ const movieEditLoad = () => {
     });
 }
 
-let deleteData = (id) => {
-    let newID = id.charAt(0);
-    console.log(newID);
-
-    return fetch(url + '/' + newID,{
-        method: 'delete',
-        headers: {
-            'Content-Type': 'application/json'}
-    }).then(response => response.json());
-};
+let deleteData = (movie) => {
+    getMovies().then((movies) => {
+        movies.forEach(({title, rating, id}) => {
+            if (movie === title) {
+                return fetch(url + '/' + id,{
+                    method: 'delete',
+                    headers: {
+                        'Content-Type': 'application/json'}
+                }).then(response => response.json());
+            }
+        });
+});
+}
 
 
 

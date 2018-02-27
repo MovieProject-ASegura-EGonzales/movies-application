@@ -1,30 +1,29 @@
 html, body {
     height: 100%;
+    /*background: url("https://media.giphy.com/media/1W3H166YbyZ1K/giphy.gif");*/
 }
 
 .message {
     position: relative;
-    top: 50%;
-    transform: translateY(-100%);
+    /*top: 50%;*/
+    width: 100%;
+    height: 100%;
+    /*transform: translateY(-100%);*/
     text-align: center;
 }
 
 .hidden { display: none; }
 
+.show {display: inline-block}
 
-/*div#load_scree{*/
-    /*background: black;*/
-    /*opacity: 1;*/
-    /*position: fixed;*/
-    /*z-index: 10;*/
-    /*top: 0px;*/
-    /*width: 100%;*/
-    /*height: 1600px;*/
-/*}*/
+.pacman {
+    background: url("psypsy.gif");
+    background-size: 300px;
+    /*height: 100%;*/
+    width: 40%;
+    height: 100%;
 
-/*div#load_screen > div#loading_document{*/
-    /*color:black;*/
-    /*width: 120px;*/
-    /*height: 24px;*/
-    /*margin: 300px auto;*/
+}
+/*.dope {*/
+    /*background: azure;*/
 /*}*/
